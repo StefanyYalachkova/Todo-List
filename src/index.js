@@ -6,13 +6,13 @@ class ToDoList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: [],
-      key: ''
+      items: []
     };
 
     this.addItem = this.addItem.bind(this);
     this.editItem = this.editItem.bind(this);
     this.removeItem = this.removeItem.bind(this);
+    this.renderComplitioCaption = this.renderComplitioCaption.bind(this);
   }
 
   addItem(value) {
@@ -24,7 +24,8 @@ class ToDoList extends React.Component {
 
     let newItem = {
       text: value,
-      key: newKeyValue
+      key: newKeyValue,
+      checked: false
     };
 
     if (newItem !== '') {
@@ -44,6 +45,7 @@ class ToDoList extends React.Component {
     this.setState({
       items: newList
     });
+
   }
 
   removeItem(item) {
@@ -53,6 +55,18 @@ class ToDoList extends React.Component {
     this.setState({
       items: newList
     });
+  }
+
+  renderComplitioCaption() {
+    const showCaption = this.state.items.every(item => item.checked);
+
+    if (showCaption && this.state.items.length) {
+      return (
+        <div>
+          <h2>All tasks are completed!</h2>
+        </div>
+      )
+    }
   }
 
   render() {
@@ -67,6 +81,7 @@ class ToDoList extends React.Component {
           removeItem={this.removeItem}
           editItem={this.editItem}
         />
+        {this.renderComplitioCaption()}
       </div>
     );
   }
@@ -89,9 +104,11 @@ class CreateTask extends React.Component {
 
   handleAdd(event) {
     this.props.onHandleAdd(this.state.value);
+
     this.setState({
       value: ''
     });
+
     event.preventDefault();
   }
 
@@ -108,18 +125,24 @@ class CreateTask extends React.Component {
 }
 
 class TasksList extends React.Component {
+
   render() {
     const listItems = this.props.toDoItems.map((item, index) => {
       return (
         <TaskRow
           item={item}
           key={item.key}
+          checked={item.checked}
           handleEditItem={(updatedItemValue) => this.props.editItem({
-            text: updatedItemValue,
-            key: item.key
+            ...item,
+            text: updatedItemValue
           }, index)}
           handleRemoveItem={() => this.props.removeItem(index)}
           handleChangeElement={this.handleChangeElement}
+          handleCompleteItem={() => this.props.editItem({
+            ...item,
+            checked: !item.checked
+          }, index)}
         />
       );
     });
@@ -139,16 +162,13 @@ class TaskRow extends React.Component {
     super(props);
     this.state = {
       isEditing: false,
-      checked: false,
       value: ''
     }
 
     this.internalHandleEditItem = this.internalHandleEditItem.bind(this);
     this.setUpdate = this.setUpdate.bind(this);
-    this.internalHandleCompleteItem = this.internalHandleCompleteItem.bind(this);
     this.handleChangeElement = this.handleChangeElement.bind(this);
     this.updateItem = this.updateItem.bind(this);
-
   }
 
   internalHandleEditItem() {
@@ -162,13 +182,6 @@ class TaskRow extends React.Component {
     }
 
     handleEditItem(item);
-  }
-
-  internalHandleCompleteItem() {
-    this.setState({
-      checked: !this.state.checked
-    })
-
   }
 
   handleChangeElement(event) {
@@ -196,16 +209,16 @@ class TaskRow extends React.Component {
     this.props.handleEditItem(this.state.value);
   }
 
-  defaultItem(item) {
+  defaultItem(item, checked) {
     item = this.props.item;
-    const { checked } = this.state;
+    checked = this.props.checked;
 
     return (
       <div>
-        <span className={checked ? "checked" : "unchecked"}>{this.props.item.text}</span>
+        <input type="checkbox" id="accept" value={checked} onChange={this.props.handleCompleteItem}></input>
+        <span className={checked ? "checked" : "unchecked"}>{item.text}</span>
         <button type="submit" value={item} onClick={this.internalHandleEditItem}>Edit</button>
         <button type="submit" value={item} onClick={this.props.handleRemoveItem}>Remove</button>
-        <input type="checkbox" id="accept" value={checked} onChange={this.internalHandleCompleteItem}></input>
       </div>
     );
   }
