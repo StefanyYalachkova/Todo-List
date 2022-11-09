@@ -4,14 +4,11 @@ body {
   width: 300px;
   margin: auto;
   background-color: #f1d2e0e1;
-
 }
 
 .item {
   margin: 10px;
   height: 100%;
-
-
 }
 
 button[type=submit] {
@@ -41,4 +38,8 @@ span {
 .checked {
   color: red;
   text-decoration: line-through;
+}
+
+ul {
+  list-style-type: none;
 }
