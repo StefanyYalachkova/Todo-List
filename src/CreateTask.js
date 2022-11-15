@@ -1,40 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-class CreateTask extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { value: '' };
+const CreateTask = (props) => {
+    const [value, setValue] = useState('');
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleAdd = this.handleAdd.bind(this);
-    }
+    const handleChange = (event) => {
+        setValue(event.target.value);
+    };
 
-    handleChange(event) {
-        this.setState({
-            value: event.target.value
-        });
-    }
+    const handleAdd = (event) => {
+        props.onHandleAdd(value);
 
-    handleAdd(event) {
-        this.props.onHandleAdd(this.state.value);
-
-        this.setState({
-            value: ''
-        });
+        setValue('');
 
         event.preventDefault();
-    }
+    };
 
-    render() {
-        return (
-            <form>
-                <h1>TODO LIST</h1>
-                <b>Task:</b>
-                <input type="text" value={this.state.value} onChange={this.handleChange} />
-                <button type="submit" onClick={this.handleAdd}> Add </button>
-            </form>
-        );
-    }
-}
+    return (
+        <form>
+            <h1>TODO LIST</h1>
+            <b>Task:</b>
+            <input type="text" value={value} onChange={handleChange} />
+            <button type="submit" onClick={handleAdd}> Add </button>
+        </form>
+    );
 
-export { CreateTask }
+};
+
+CreateTask.propTypes = {
+    onHandleAdd: PropTypes.func
+};
+
+export { CreateTask };

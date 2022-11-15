@@ -1,63 +1,60 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { TaskRow } from './TaskRow';
 
-class TasksList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showCaption: false
-        };
-    }
+function TasksList(props) {
 
-    componentDidUpdate(prev) {
-        const newShowCaption = this.props.toDoItems.length > 0 && this.props.toDoItems.every(item => item.checked);
-        const prevShow = prev.toDoItems.length && prev.toDoItems.every(item => item.checked);
+    const [showCaption, setShowCaption] = useState(false);
 
-        if (prevShow !== newShowCaption) {
-            this.setState({
-                showCaption: newShowCaption
-            });
-        }
-    }
+    useEffect(() => {
+        const newShowCaption = props.toDoItems.length > 0 && props.toDoItems.every(item => item.checked);
 
-    render() {
-        const listItems = this.props.toDoItems.map((item, index) => {
-            return (
-                <TaskRow
-                    item={item}
-                    key={item.key}
-                    checked={item.checked}
-                    handleEditItem={(updatedItemValue) => this.props.editItem({
-                        ...item,
-                        text: updatedItemValue
-                    }, index)}
-                    handleRemoveItem={() => this.props.removeItem(index)}
-                    handleChangeElement={this.handleChangeElement}
-                    handleCompleteItem={() => this.props.editItem({
-                        ...item,
-                        checked: !item.checked
-                    }, index)}
-                />
-            );
-        });
+        setShowCaption(newShowCaption);
 
+    }, [props.toDoItems]);
+
+    const listItems = props.toDoItems.map((item, index) =>{
         return (
-            <div className='listItems'>
-                <ul>
-                    {listItems}
-                </ul>
-                {this.state.showCaption &&
-
-                    (
-                        <form>
-                            <h2>All tasks are completed!</h2>
-                        </form>
-                    )
-
-                }
-            </div>
+            <TaskRow
+                item={item}
+                key={item.key}
+                checked={item.checked}
+                handleEditItem={(updatedItemValue) => props.editItem({
+                    ...item,
+                    text: updatedItemValue
+                }, index)}
+                handleRemoveItem={() => props.removeItem(index)}
+                handleCompleteItem={() => props.editItem({
+                    ...item,
+                    checked: !item.checked
+                }, index)}
+            />
         );
-    }
+    });
+
+    return (
+        <div className="listItems">
+            <ul>
+                {listItems}
+            </ul>
+            {showCaption &&
+
+                (
+                    <form>
+                        <h2>All tasks are completed!</h2>
+                    </form>
+                )
+
+            }
+        </div>
+    );
+
 }
 
-export { TasksList }
+TasksList.propTypes = {
+    toDoItems: PropTypes.array,
+    removeItem: PropTypes.func,
+    editItem: PropTypes.func
+};
+
+export { TasksList };

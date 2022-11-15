@@ -1,84 +1,77 @@
-import React from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-class TaskRow extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isEditing: false,
-            value: ''
-        }
+function TaskRow(props) {
 
-        this.internalHandleEditItem = this.internalHandleEditItem.bind(this);
-        this.setUpdate = this.setUpdate.bind(this);
-        this.handleChangeElement = this.handleChangeElement.bind(this);
-        this.updateItem = this.updateItem.bind(this);
-    }
+    const [isEditing, setIsEditing] = useState(false);
+    const [value, setValue] = useState('');
 
-    internalHandleEditItem() {
-        const { item, handleEditItem } = this.props;
+    const internalHandleEditItem = () => {
+        const { item, handleEditItem } = props;
 
-        if (!this.state.isEditing) {
-            this.setState({
-                isEditing: true,
-                value: item.text
-            });
+        if (!isEditing) {
+            setIsEditing(true);
+            setValue(item.text);
         }
 
         handleEditItem(item);
-    }
+    };
 
-    handleChangeElement(event) {
-        this.setState({
-            value: event.target.value,
-        });
-    }
+    const handleChangeElement = (event) => {
+        setValue(event.target.value);
+    };
 
-    setUpdate(item) {
-        item = this.props.item;
+    const setUpdate = (item) => {
+        item = props.item;
 
         return (
             <div>
-                <input type="text" value={this.state.value} onChange={this.handleChangeElement} />
-                <button type="submit" value={item} onClick={this.updateItem}>Finish</button>
+                <input type="text" value={value} onChange={handleChangeElement} />
+                <button type="submit" value={item} onClick={updateItem}>Finish</button>
             </div>
         );
-    }
+    };
 
-    updateItem() {
-        this.setState({
-            isEditing: false
-        });
+    const updateItem = () => {
+        setIsEditing(false);
 
-        this.props.handleEditItem(this.state.value);
-    }
+        props.handleEditItem(value);
+    };
 
-    defaultItem(item, checked) {
-        item = this.props.item;
-        checked = this.props.checked;
+    const defaultItem = (item, checked) => {
+        item = props.item;
+        checked = props.checked;
 
         return (
             <div>
-                <input type="checkbox" id="accept" value={checked} onChange={this.props.handleCompleteItem}></input>
-                <span className={checked ? "checked" : "unchecked"}>{item.text}</span>
-                <button type="submit" value={item} onClick={this.internalHandleEditItem}>Edit</button>
-                <button type="submit" value={item} onClick={this.props.handleRemoveItem}>Remove</button>
+                <input type="checkbox" id="accept" value={checked} onChange={props.handleCompleteItem}></input>
+                <span className={checked ? 'checked' : 'unchecked'}>{item.text}</span>
+                <button type="submit" value={item} onClick={internalHandleEditItem}>Edit</button>
+                <button type="submit" value={item} onClick={props.handleRemoveItem}>Remove</button>
             </div>
         );
-    }
+    };
 
-    render() {
-        const { item } = this.props;
+    const { item } = props;
 
-        return (
-            <li key={item.key} >
-                {
-                    this.state.isEditing
-                        ? this.setUpdate()
-                        : this.defaultItem()
-                }
-            </li>
-        );
-    }
+    return (
+        <li key={item.key} >
+            {
+                isEditing
+                    ? setUpdate()
+                    : defaultItem()
+            }
+        </li>
+    );
+
 }
 
-export { TaskRow }
+TaskRow.propTypes = {
+    item: PropTypes.object,
+    handleEditItem: PropTypes.func,
+    checked: PropTypes.bool,
+    handleCompleteItem: PropTypes.func,
+    handleRemoveItem: PropTypes.func
+};
+
+export { TaskRow };

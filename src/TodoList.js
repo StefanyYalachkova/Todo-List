@@ -1,78 +1,39 @@
-import React from 'react';
-import { CreateTask } from "./CreateTask";
+import React, { useReducer } from 'react';
+import { CreateTask } from './CreateTask';
 import { TasksList } from './TasksList';
+import { reducer } from './itemsReducer';
 
-class ToDoList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            items: [],
-            showCaption: false
-        };
+const initialValue = {
+    items: []
+};
 
-        this.addItem = this.addItem.bind(this);
-        this.editItem = this.editItem.bind(this);
-        this.removeItem = this.removeItem.bind(this);
-    }
+function ToDoList() {
+    const [state, dispatch] = useReducer(reducer, initialValue);
 
-    addItem(value) {
-        const { items } = this.state;
-        const lastElementIndex = items.length ? items.length - 1 : 0;
-        const lastElement = items[lastElementIndex] || {}
-        const { key } = lastElement
-        const newKeyValue = (key || 0) + 1;
+    const addItem = (value) => {
+        dispatch({ type: 'addItem', payload: { value } });
+    };
 
-        let newItem = {
-            text: value,
-            key: newKeyValue,
-            checked: false
-        };
+    const editItem = (updatedItem, index) => {
+        dispatch({ type: 'editItem', payload: { updatedItem, index } });
+    };
 
-        if (newItem !== '') {
-            let newState = [...this.state.items];
-            newState.push(newItem);
+    const removeItem = (item) => {
+        dispatch({ type: 'removeItem', payload: { item } });
+    };
 
-            this.setState({
-                items: newState
-            });
-        }
-    }
-
-    editItem(updatedItem, index) {
-        let newList = [...this.state.items];
-        newList.splice(index, 1, updatedItem);
-
-        this.setState({
-            items: newList
-        });
-    }
-
-    removeItem(item) {
-        let newList = [...this.state.items];
-        newList.splice(item, 1);
-
-        this.setState({
-            items: newList
-        });
-
-    }
-
-    render() {
-
-        return (
-            <div>
-                <CreateTask
-                    onHandleChange={this.handleChange}
-                    onHandleAdd={this.addItem}
-                />
-                <TasksList
-                    toDoItems={this.state.items}
-                    removeItem={this.removeItem}
-                    editItem={this.editItem}
-                />
-            </div>
-        );
-    }
+    return (
+        <div>
+            <CreateTask
+                onHandleAdd={addItem}
+            />
+            <TasksList
+                toDoItems={state.items}
+                removeItem={removeItem}
+                editItem={editItem}
+            />
+        </div>
+    );
 }
 
-export { ToDoList }
+export { ToDoList };
