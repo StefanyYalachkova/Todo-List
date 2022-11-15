@@ -1,0 +1,45 @@
+body {
+  padding: 20px;
+  height: 400px;
+  width: 300px;
+  margin: auto;
+  background-color: #f1d2e0e1;
+}
+
+.item {
+  margin: 10px;
+  height: 100%;
+}
+
+button[type=submit] {
+  font-family: sans-serif;
+  border-radius: 8px;
+  height: 100%;
+  cursor: pointer;
+  margin: 5px;
+  background-color: #ced8ec;
+}
+
+input[type=text],
+input[type=checkbox] {
+  margin: 10px;
+  padding: 3px;
+}
+
+form {
+  text-align: center;
+}
+
+span {
+  display: inline-block;
+  width: 80px;
+}
+
+.checked {
+  color: red;
+  text-decoration: line-through;
+}
+
+ul {
+  list-style-type: none;
+}
